@@ -18,48 +18,22 @@ class Z_CookiesalertCookiesModuleFrontController extends ModuleFrontController {
 
             // Usefull vars derivated from getContext
             $context = Context::getContext();
-            $cart = $context->cart;
             $cookie = $context->cookie;
-            $customer = $context->customer;
-            $id_lang = $cookie->id_lang;
+
+            $cookie->__set('zcookiealert', "accepted");
 
             // Default response with translation from the module
-            $response = array('status' => false, "message" => $module->l('Nothing here.'));
-
-            switch (Tools::getValue('action')) {
-
-                case 'action_name':
-
-                    // Edit default response and do some work here
-                    $response = array('status' => true, "message" => $module->l('It works !'));
-
-                    break;
-
-                default:
-                    break;
-
-            }
+            $response = array('status' => true, "message" => $module->l('Done.'));
         }
 
         // Classic json response
-        $json = Tools::jsonEncode($response);
-        echo $json;
-        die;
-
-        // For displaying like any other use this method to assign and display your template placed in modules/modulename/views/template/front/...
-        // Just put some vars in your template
-        // $this->context->smarty->assign(array('var1'=>'value1'));
-        // $this->setTemplate('template.tpl');
-
-        // For sending a template in ajax use this method
-        // $this->context->smarty->fetch('template.tpl');
+        die(Tools::jsonEncode($response));
     }
     // displayAjax for FrontEnd Invoke the ajax action
     // ajaxProcess for BackEnd Invoke the ajax action
 
     public function displayAjaxAcceptCookies()
     {
-        $this->context->cookie->__set('zcookiealert', "accepted");
 
         header('Content-Type: application/json');
         die(Tools::jsonEncode(['cookie'=> "accepted"]));
