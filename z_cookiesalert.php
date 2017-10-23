@@ -44,13 +44,27 @@ class Z_Cookiesalert extends Module
      */
     public function hookDisplayFooter($params)
     {
-        $this->context->smarty->assign(
-            array(
-                'z_cookies_alert_name' => Configuration::get('Z_COOKIES_ALERT_NAME'),
-                'z_cookies_alert_message' => Configuration::get('Z_COOKIES_ALERT_MESSAGE')
-            )
-        );
-        return $this->display(__FILE__, 'z_cookiesalert.tpl');
+        if ($this->context->cookie->zcookiealert != "accepted") {
+            // Create a link with the good path
+            $link = new Link;
+            $parameters = array("action" => "action_name");
+            $ajax_link = $link->getModuleLink('z_cookiesalert','controller', $parameters);
+            echo $ajax_link;
+
+            Media::addJsDef(array(
+                "ajax_link" => $ajax_link
+            ));
+
+            $this->context->smarty->assign(
+                array(
+                    'z_cookies_alert_name' => Configuration::get('Z_COOKIES_ALERT_NAME'),
+                    'z_cookies_alert_message' => Configuration::get('Z_COOKIES_ALERT_MESSAGE'),
+                    'pony' => $this->context->cookie->zcookiealert,
+                    "ajax_link" => $ajax_link
+                )
+            );
+            return $this->display(__FILE__, 'z_cookiesalert.tpl');
+        }
     }
 
     /**
@@ -58,7 +72,8 @@ class Z_Cookiesalert extends Module
      */
     public function hookDisplayHeader()
     {
-        $this->context->controller->addCSS($this->_path.'css/z_cookiesalert.css', 'all');
+        $this->context->controller->registerStylesheet('modules-z_cookiesalert', 'modules/'.$this->name.'/css/z_cookiesalert.css', ['media' => 'all', 'priority' => 150]);
+        $this->context->controller->registerJavascript('modules-z_cookiesalert', 'modules/'.$this->name.'/js/z_cookiesalert.js', ['position' => 'bottom', 'priority' => 150]);
     }
 
     /**
@@ -149,5 +164,4 @@ class Z_Cookiesalert extends Module
 
         return $helper->generateForm($fields_form);
     }
-
 }
