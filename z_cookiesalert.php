@@ -60,8 +60,8 @@ class Z_Cookiesalert extends Module
      */
     public function hookDisplayHeader()
     {
-        $this->context->controller->registerStylesheet('modules-z_cookiesalert', 'modules/'.$this->name.'/css/z_cookiesalert.css', ['media' => 'all', 'priority' => 150]);
-        $this->context->controller->registerJavascript('modules-z_cookiesalert', 'modules/'.$this->name.'/js/z_cookiesalert.js', ['position' => 'bottom', 'priority' => 150]);
+        $this->context->controller->registerStylesheet('modules-z_cookiesalert', 'modules/' . $this->name . '/views/css/z_cookiesalert.css', ['media' => 'all', 'priority' => 150]);
+        $this->context->controller->registerJavascript('modules-z_cookiesalert', 'modules/' . $this->name . '/views/js/z_cookiesalert.js', ['position' => 'bottom', 'priority' => 150]);
     }
 
     /**
@@ -72,20 +72,18 @@ class Z_Cookiesalert extends Module
     {
         $output = null;
 
-        if (Tools::isSubmit('submit'.$this->name))
-        {
-            $z_cookies_alert_name = strval(Tools::getValue('Z_COOKIES_ALERT_NAME'));
+        if (Tools::isSubmit('submit' . $this->name)) {
+            $z_cookies_alert_name = (String)Tools::getValue('Z_COOKIES_ALERT_NAME');
             if (!$z_cookies_alert_name
                 || empty($z_cookies_alert_name)
                 || !Validate::isGenericName($z_cookies_alert_name))
                 $output .= $this->displayError($this->l('Invalid Configuration value'));
-            else
-            {
+            else {
                 Configuration::updateValue('Z_COOKIES_ALERT_NAME', $z_cookies_alert_name);
                 $output .= $this->displayConfirmation($this->l('Settings updated'));
             }
         }
-        return $output.$this->displayConfigForm();
+        return $output . $this->displayConfigForm();
     }
 
     /**
@@ -98,22 +96,24 @@ class Z_Cookiesalert extends Module
         $default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
 
         // Init Fields form array
-        $fields_form[0]['form'] = array(
-            'legend' => array(
-                'title' => $this->l('Settings'),
-            ),
-            'input' => array(
-                array(
-                    'type' => 'text',
-                    'label' => $this->l('Message'),
-                    'name' => 'Z_COOKIES_ALERT_MESSAGE',
-                    'size' => 128,
-                    'required' => true
+        $fields_form = array(
+            'form' => array(
+                'legend' => array(
+                    'title' => $this->l('Settings'),
+                ),
+                'input' => array(
+                    array(
+                        'type' => 'text',
+                        'label' => $this->l('Message'),
+                        'name' => 'Z_COOKIES_ALERT_MESSAGE',
+                        'size' => 128,
+                        'required' => true
+                    )
+                ),
+                'submit' => array(
+                    'title' => $this->l('Save'),
+                    'class' => 'btn btn-default pull-right'
                 )
-            ),
-            'submit' => array(
-                'title' => $this->l('Save'),
-                'class' => 'btn btn-default pull-right'
             )
         );
 
@@ -123,7 +123,7 @@ class Z_Cookiesalert extends Module
         $helper->module = $this;
         $helper->name_controller = $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
+        $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
 
         // Language
         $helper->default_form_language = $default_lang;
@@ -133,16 +133,16 @@ class Z_Cookiesalert extends Module
         $helper->title = $this->displayName;
         $helper->show_toolbar = true;        // false -> remove toolbar
         $helper->toolbar_scroll = true;      // yes - > Toolbar is always visible on the top of the screen.
-        $helper->submit_action = 'submit'.$this->name;
+        $helper->submit_action = 'submit' . $this->name;
         $helper->toolbar_btn = array(
             'save' =>
                 array(
                     'desc' => $this->l('Save'),
-                    'href' => AdminController::$currentIndex.'&configure='.$this->name.'&save'.$this->name.
-                        '&token='.Tools::getAdminTokenLite('AdminModules'),
+                    'href' => AdminController::$currentIndex . '&configure=' . $this->name . '&save' . $this->name .
+                        '&token=' . Tools::getAdminTokenLite('AdminModules'),
                 ),
             'back' => array(
-                'href' => AdminController::$currentIndex.'&token='.Tools::getAdminTokenLite('AdminModules'),
+                'href' => AdminController::$currentIndex . '&token=' . Tools::getAdminTokenLite('AdminModules'),
                 'desc' => $this->l('Back to list')
             )
         );
@@ -150,6 +150,6 @@ class Z_Cookiesalert extends Module
         // Load current value
         $helper->fields_value['Z_COOKIES_ALERT_MESSAGE'] = Configuration::get('Z_COOKIES_ALERT_MESSAGE');
 
-        return $helper->generateForm($fields_form);
+        return $helper->generateForm(array($fields_form));
     }
 }
